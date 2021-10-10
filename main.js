@@ -1,19 +1,28 @@
 import './style.css'
 import {extract, ratio, token_set_ratio} from 'fuzzball'
 
-let sourceTableColumns = 'Id, Uuid, Name, Street, City, PIN, Age, Score, Percentage, Height, Weight, Volumne, Register Date'
-let destinationTableColumns = 'myId, address, myName, Country, Depth, Marks, Percevt, mighty'
+let destinationTableColumns = 'myId, address, myName, Country, Depth, Marks, Percevt, mighty, help'
+let sourceTableColumns = 'Id, Uuid, Name, Street, City, PIN, Age, Score, Percentage, Height, Weight, helper, Volumne, Register Date, Mark'
+
+// let destinationTableColumns = 'hiii'
+// let sourceTableColumns = 'hello, hi, Velociraptor'
 
 const options = {
 	scorer: token_set_ratio
 }
 
-const renderSelect = (arr, defaultValue) => {
-	let tmpHtml = ''
+let fuzzyConstraint = 50
 
-	arr.forEach((i) => {
+const renderSelect = (arr, fuzzyScores) => {
+	// console.log(fuzzyScores, fuzzyScores[0]);
+
+	let isCheckReq = fuzzyScores[0][1] > fuzzyConstraint
+	let tmpHtml = `<option ${!isCheckReq ? 'selected' : ''} disabled>Please Select</option>`
+
+	arr.forEach((i, index) => {
+		// console.log(i, fuzzyScores[index])
 		tmpHtml += `
-			<option ${i == defaultValue ? 'selected' : ''}>${i}</option>
+			<option ${(i == fuzzyScores[0][0]) && isCheckReq ? 'selected' : ''}>${i}</option>
 		`
 	})
 
@@ -21,8 +30,8 @@ const renderSelect = (arr, defaultValue) => {
 }
 
 const renderTable = (commaSepSource, commaSepDestination) => {
-	const arr1 = commaSepSource.split(',')
-	const arr2 = commaSepDestination.split(',')
+	let arr1 = commaSepSource.split(',').map(i => i.trim())
+	let arr2 = commaSepDestination.split(',').map(i => i.trim())
 
 	let tmpHtml = ''
 
@@ -32,7 +41,7 @@ const renderTable = (commaSepSource, commaSepDestination) => {
 				<td> ${i} </td>
 				<td>
 					<select>
-						${renderSelect(arr2, extract(i, arr2, options)[0][0])}
+						${renderSelect(arr2, extract(i, arr2, options))}
 					</select>
 				</td>
 			</tr>
@@ -63,13 +72,11 @@ const renderApp = () => {
 		<br /><br />
 
 		<table border="1">
-			${renderTable(sourceTableColumns, destinationTableColumns)}
+			${renderTable(destinationTableColumns, sourceTableColumns)}
 		</table>
 	`
 	document.getElementById('save').addEventListener('click', () => {
 		console.log('click')
-		// console.log(document.getElementById('source').value)
-		// console.log(document.getElementById('destination').value)
 		sourceTableColumns = document.getElementById('source').value
 		destinationTableColumns = document.getElementById('destination').value
 		renderApp()
@@ -77,12 +84,3 @@ const renderApp = () => {
 }
 
 renderApp()
-
-// document.getElementById('save').addEventListener('click', () => {
-// 	console.log('click')
-// 	// console.log(document.getElementById('source').value)
-// 	// console.log(document.getElementById('destination').value)
-// 	sourceTableColumns = document.getElementById('source').value
-// 	destinationTableColumns = document.getElementById('destination').value
-// 	renderApp()
-// })
