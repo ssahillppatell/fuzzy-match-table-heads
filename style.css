@@ -11,6 +11,18 @@ textarea {
 	width: 75%;
 }
 
+input[type='range'] {
+	width: 40%;
+}
+
+input[type='button'] {
+	width: 25%;
+	padding: 0.8rem;
+	background-color: wheat;
+	border: none;
+	box-shadow: 2px 2px 10px gainsboro;
+}
+
 table {
 	width: 100%;
 	border-collapse: collapse;

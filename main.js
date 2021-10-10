@@ -67,8 +67,16 @@ const renderApp = () => {
 			<textarea id="destination" rows="6">${destinationTableColumns}</textarea>
 		</div>
 
+		<br /><br />
+
+		Select Fuzzy Score: <input type="range" min="1" max="100" value="${fuzzyConstraint}" id="myRange" oninput="this.nextElementSibling.value = this.value">
+		<output>${fuzzyConstraint}</output>
+
+		<br /><br />
+
 		<input id="save" type="button" value="Save"/>
 
+		<br /><br />
 		<br /><br />
 
 		<table border="1">
@@ -79,6 +87,7 @@ const renderApp = () => {
 		console.log('click')
 		sourceTableColumns = document.getElementById('source').value
 		destinationTableColumns = document.getElementById('destination').value
+		fuzzyConstraint = document.getElementById('myRange').value
 		renderApp()
 	})
 }
