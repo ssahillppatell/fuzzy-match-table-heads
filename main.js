@@ -58,7 +58,7 @@ document.querySelector('#app').innerHTML = `
 
 	<br /><br />
 	
-	<table>
+	<table border="1">
 		${renderTable(sourceTableColumns, destinationTableColumns)}
 	</table>
 `

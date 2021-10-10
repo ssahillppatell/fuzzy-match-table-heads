@@ -6,3 +6,13 @@
   color: #2c3e50;
   margin-top: 60px;
 }
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+table tr td {
+	width: 50%;
+	padding: 0.5rem 0;
+}
