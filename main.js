@@ -1,8 +1,8 @@
 import './style.css'
 import {extract, ratio, token_set_ratio} from 'fuzzball'
 
-const sourceTableColumns = 'Id, Uuid, Name, Street, City, PIN, Age, Score, Percentage, Height, Weight, Volumne, Register Date'
-const destinationTableColumns = 'myId, address, myName, Country, Depth, Marks, Percevt, mighty'
+let sourceTableColumns = 'Id, Uuid, Name, Street, City, PIN, Age, Score, Percentage, Height, Weight, Volumne, Register Date'
+let destinationTableColumns = 'myId, address, myName, Country, Depth, Marks, Percevt, mighty'
 
 const options = {
 	scorer: token_set_ratio
@@ -42,23 +42,47 @@ const renderTable = (commaSepSource, commaSepDestination) => {
 	return tmpHtml
 }
 
-document.querySelector('#app').innerHTML = `
-	<h1>Hello!</h1>
-	<div>
-		Source: <br />
-		${sourceTableColumns}
-	</div>
+const renderApp = () => {
+	document.querySelector('#app').innerHTML = `
+		<h1>Hello!</h1>
 
-	<br /><br />
+		<div>
+			Source: <br />
+			<textarea id="source" rows="6">${sourceTableColumns}</textarea>
+		</div>
 
-	<div>
-		Destination: <br />
-		${destinationTableColumns}
-	</div>
+		<br /><br />
 
-	<br /><br />
-	
-	<table border="1">
-		${renderTable(sourceTableColumns, destinationTableColumns)}
-	</table>
-`
+		<div>
+			Destination: <br />
+			<textarea id="destination" rows="6">${destinationTableColumns}</textarea>
+		</div>
+
+		<input id="save" type="button" value="Save"/>
+
+		<br /><br />
+
+		<table border="1">
+			${renderTable(sourceTableColumns, destinationTableColumns)}
+		</table>
+	`
+	document.getElementById('save').addEventListener('click', () => {
+		console.log('click')
+		// console.log(document.getElementById('source').value)
+		// console.log(document.getElementById('destination').value)
+		sourceTableColumns = document.getElementById('source').value
+		destinationTableColumns = document.getElementById('destination').value
+		renderApp()
+	})
+}
+
+renderApp()
+
+// document.getElementById('save').addEventListener('click', () => {
+// 	console.log('click')
+// 	// console.log(document.getElementById('source').value)
+// 	// console.log(document.getElementById('destination').value)
+// 	sourceTableColumns = document.getElementById('source').value
+// 	destinationTableColumns = document.getElementById('destination').value
+// 	renderApp()
+// })
