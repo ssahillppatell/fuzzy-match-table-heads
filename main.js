@@ -20,49 +20,12 @@ let myMap = {}
 let visitedSource = {}
 let visitedDestination = {}
 
-let change = true
-
-const filterMyMap = () => {
-	// while(change) {
-	// 	change = false
-		Object.entries(myMap).map(([key, value]) => {
-			// console.log(key, value)
-			if(Object.hasOwn(visitedSource, value[0][0])) {
-				console.log(value[0][0], visitedSource[value[0][0]])
-
-				if(visitedSource[value[0][0]]['score'] < value[0][1]) {
-					myMap[visitedSource[value[0][0]]['dest']].shift()
-					visitedSource[value[0][0]] = {
-						dest: key,
-						score: value[0][1]
-					}
-				} else {
-					myMap[key].shift()
-					visitedSource[myMap[key][0][0]] = {
-						dest: myMap[key][0][0],
-						score: myMap[key][0][1]
-					}
-					console.log(myMap, myMap[key], myMap[key][0][0], visitedSource[myMap[key][0][0]])
-				}
-			} else {
-				visitedSource[value[0][0]] = {
-					dest: key,
-					score: value[0][1]
-				}
-			}
-		})
-	// }
-
-}
-
 const hydrateMap = () => {
 	sourceArr = sourceTableColumns.split(',').map(i => i.trim())
 	destinationArr = destinationTableColumns.split(',').map(i => i.trim())
 	destinationArr.forEach((i) => {
 		myMap[i] = extract(i, sourceArr, options)
 	})
-
-	// filterMyMap()
 
 	const tempListOfDestinVisitedSource = {}
 
@@ -89,6 +52,7 @@ const hydrateMap = () => {
 						dest: key,
 						score: i[1]
 					}
+
 					if(tempListOfDestinVisitedSource[key]) {
 						if(tempListOfDestinVisitedSource[key] < i[1]) {
 							tempListOfDestinVisitedSource[key] = i[1]
@@ -102,7 +66,6 @@ const hydrateMap = () => {
 		})
 	})
 
-	// const listOfDestinVisitedSource = tempListOfDestinVisitedSource.filter((x, y) => tempListOfDestinVisitedSource.indexOf(x) == y)
 	console.log(tempListOfDestinVisitedSource)
 
 	Object.entries(visitedSource).forEach(([key, value]) => {
@@ -110,27 +73,17 @@ const hydrateMap = () => {
 			console.log(key, value['dest'])
 			delete visitedSource[key]
 		}
-		// visitedDestination[value['dest']] = key
 	})
-	// delete visitedSource['cid']
 
 
 	Object.entries(visitedSource).forEach(([key, value]) => {
 		visitedDestination[value['dest']] = key
 	})
 
-	// destinationArr.forEach((i) => {
-	// 	Object.entries(visitedSource).forEach(([key, value]) => {
-	// 		// console.log(value['dest']);
-	// 		visitedDestination[i] = value['dest']
-	// 	})
-	// })
-
 	console.log(myMap, visitedSource, visitedDestination)
 }
 
 hydrateMap()
-// console.log(myMap)
 
 const renderSelect = (currValue) => {
 	let isCheckReq = myMap[currValue][0][1] > fuzzyConstraint
@@ -204,7 +157,6 @@ const renderApp = () => {
 		myMap = {}
 		visitedSource = {}
 		hydrateMap()
-		console.log(myMap)
 		renderApp()
 	})
 }
