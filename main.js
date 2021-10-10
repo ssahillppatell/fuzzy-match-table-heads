@@ -1,11 +1,11 @@
 import './style.css'
 import {extract, ratio, token_set_ratio} from 'fuzzball'
 
-// let sourceTableColumns = 'Id, Uuid, Name, Street, City, PIN, Age, Score, Percentage, Height, Weight, helper, Volumne, Register Date, Mark, iid, ccid, mmid, fff, awo'
-// let destinationTableColumns = 'myId, address, myName, Country, Depth, Marks, Percevt, mighty, help, awer, mid, id, jjid'
+let sourceTableColumns = 'Id, Uuid, Name, Street, City, PIN, Age, Score, Percentage, Height, Weight, helper, Volumne, Register Date, Mark, iid, ccid, mmid, fff, awo'
+let destinationTableColumns = 'myId, address, myName, Country, Depth, Marks, Percevt, mighty, help, awer, mid, id, jjid'
 
-let sourceTableColumns = 'iid, ccid, mmid, fff, awo'
-let destinationTableColumns = 'awer, mid, id, jjid'
+// let sourceTableColumns = 'iid, ccid, mmid, fff, awo'
+// let destinationTableColumns = 'awer, mid, id, jjid'
 
 let sourceArr = []
 let destinationArr = []
@@ -14,7 +14,7 @@ const options = {
 	scorer: token_set_ratio
 }
 
-let fuzzyConstraint = 20
+let fuzzyConstraint = 70
 
 let myMap = {}
 let visitedSource = {}
@@ -40,11 +40,13 @@ const hydrateMap = () => {
 						}
 
 						if(tempListOfDestinVisitedSource[key]) {
-							if(tempListOfDestinVisitedSource[key] < i[1]) {
+							if(tempListOfDestinVisitedSource[key] < i[1] && i[1] > fuzzyConstraint) {
 								tempListOfDestinVisitedSource[key] = i[1]
 							}
 						} else{
-							tempListOfDestinVisitedSource[key] = i[1]
+							if(i[1] > fuzzyConstraint) {
+								tempListOfDestinVisitedSource[key] = i[1]
+							}
 						}
 					}
 				} else {
@@ -54,11 +56,13 @@ const hydrateMap = () => {
 					}
 
 					if(tempListOfDestinVisitedSource[key]) {
-						if(tempListOfDestinVisitedSource[key] < i[1]) {
+						if(tempListOfDestinVisitedSource[key] < i[1] && i[1] > fuzzyConstraint) {
 							tempListOfDestinVisitedSource[key] = i[1]
 						}
 					} else{
-						tempListOfDestinVisitedSource[key] = i[1]
+						if(i[1] > fuzzyConstraint) {
+							tempListOfDestinVisitedSource[key] = i[1]
+						}
 					}
 				}
 
@@ -73,8 +77,13 @@ const hydrateMap = () => {
 			console.log(key, value['dest'])
 			delete visitedSource[key]
 		}
+
+		if(!Object.hasOwn(tempListOfDestinVisitedSource, value['dest'])) {
+			delete visitedSource[key]
+		}
 	})
 
+	console.log(visitedSource);
 
 	Object.entries(visitedSource).forEach(([key, value]) => {
 		visitedDestination[value['dest']] = key
@@ -86,12 +95,11 @@ const hydrateMap = () => {
 hydrateMap()
 
 const renderSelect = (currValue) => {
-	let isCheckReq = myMap[currValue][0][1] > fuzzyConstraint
-	let tmpHtml = `<option ${!isCheckReq ? 'selected' : ''} disabled>Please Select</option>`
+	let tmpHtml = Object.hasOwn(visitedDestination, currValue) ? `<option disabled> Please Select </option>` : `<option selected disabled> Please Select </option>`
 
 	sourceArr.forEach((i, index) => {
 		tmpHtml += `
-			<option ${(i == myMap[currValue][0][0]) && isCheckReq ? 'selected' : ''}>${i}</option>
+			<option ${i == visitedDestination[currValue] ? 'selected' : ''}> ${i} </option>
 		`
 	})
 
@@ -150,12 +158,12 @@ const renderApp = () => {
 		</table>
 	`
 	document.getElementById('save').addEventListener('click', () => {
-		console.log('click');
 		sourceTableColumns = document.getElementById('source').value
 		destinationTableColumns = document.getElementById('destination').value
 		fuzzyConstraint = document.getElementById('myRange').value
 		myMap = {}
 		visitedSource = {}
+		visitedDestination = {}
 		hydrateMap()
 		renderApp()
 	})
