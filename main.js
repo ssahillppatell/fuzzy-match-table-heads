@@ -31,7 +31,7 @@ const checkVal = (currVal, score) => {
 		})
 	})
 
-	if(!check && !Object.hasOwn(tmpMap, currVal)) {
+	if(!Object.hasOwn(tmpMap, currVal)) {
 		check = true
 		Object.entries(tmpMap).forEach(([key, value]) => {
 			if(value == currVal) {
@@ -141,6 +141,7 @@ const renderApp = () => {
 		destinationTableColumns = document.getElementById('destination').value
 		fuzzyConstraint = document.getElementById('myRange').value
 		myMapDS = {}
+		tmpMap = {}
 		hydrateMap()
 		renderApp()
 	})
