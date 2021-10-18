@@ -1,95 +1,98 @@
-import './style.css'
-import {extract, ratio, token_set_ratio} from 'fuzzball'
+import './style.css';
+import { extract, ratio, token_set_ratio } from 'fuzzball';
 
-let sourceTableColumns = 'Id, Uuid, Name, Street, City, PIN, Age, Score, Percentage, Height, Weight, helper, Volumne, Register Date, Mark, iid, ccid, mmid, fff, awo'
-let destinationTableColumns = 'myId, address, myName, Country, Depth, Marks, Percevt, mighty, help, awer, mid, id, jjid'
+let sourceTableColumns =
+    'Id, Uuid, Name, Street, City, PIN, Age, Score, Percentage, Height, Weight, helper, Volumne, Register Date, Mark, iid, ccid, mmid, fff, awo';
+let destinationTableColumns =
+    'myId, address, myName, Country, Depth, Marks, Percevt, mighty, help, awer, mid, id, jjid';
 
 // let sourceTableColumns = 'iid, cchid, mmid, fff, awo'
 // let destinationTableColumns = 'awer, mid, id, jjid, fgh'
 
-let sourceArr = []
-let destinationArr = []
+let sourceArr = [];
+let destinationArr = [];
 
 const options = {
-	scorer: token_set_ratio
-}
+    scorer: ratio,
+};
 
-let fuzzyConstraint = 60
+let fuzzyConstraint = 60;
 
-let myMapDS = {}
+let myMapDS = {};
 
-let tmpMap = {}
+let tmpMap = {};
 
 const checkVal = (currVal, score) => {
-	let check = true;
+    let check = true;
 
-	Object.entries(myMapDS).forEach(([key, value]) => {
-		value.forEach((i) => {
-			if(i[0] == currVal && i[1] > score) {
-				check = false;
-			}
-		})
-	})
+    Object.entries(myMapDS).forEach(([key, value]) => {
+        value.forEach((i) => {
+            if (i[0] == currVal && i[1] > score) {
+                check = false;
+            }
+        });
+    });
 
-	if(!Object.hasOwn(tmpMap, currVal)) {
-		check = true
-		Object.entries(tmpMap).forEach(([key, value]) => {
-			if(value == currVal) {
-				check = false
-			}
-		})
-	}
+    if (!Object.hasOwn(tmpMap, currVal)) {
+        check = true;
+        Object.entries(tmpMap).forEach(([key, value]) => {
+            if (value == currVal) {
+                check = false;
+            }
+        });
+    }
 
-	return check
-}
+    return check;
+};
 
 const logMap = () => {
-	Object.entries(myMapDS).forEach(([key, value]) => {
-		value.forEach((i) => {
-			if(i[1] > fuzzyConstraint && checkVal(i[0], i[1])) {
-				if(Object.hasOwn(tmpMap, key)) {
-					// if(checkVal(tmpMap[key], i[1])) {
-					// 	tmpMap[key] = i[0]
-					// }
-				} else {
-					tmpMap[key] = i[0]
-				}
-			}
-		})
-	})
-}
-
+    Object.entries(myMapDS).forEach(([key, value]) => {
+        value.forEach((i) => {
+            if (i[1] > fuzzyConstraint && checkVal(i[0], i[1])) {
+                if (Object.hasOwn(tmpMap, key)) {
+                    // if(checkVal(tmpMap[key], i[1])) {
+                    // 	tmpMap[key] = i[0]
+                    // }
+                } else {
+                    tmpMap[key] = i[0];
+                }
+            }
+        });
+    });
+};
 
 const hydrateMap = () => {
-	sourceArr = sourceTableColumns.split(',').map(i => i.trim())
-	destinationArr = destinationTableColumns.split(',').map(i => i.trim())
-	destinationArr.forEach((i) => {
-		myMapDS[i] = extract(i, sourceArr, options)
-	})
+    sourceArr = sourceTableColumns.split(',').map((i) => i.trim());
+    destinationArr = destinationTableColumns.split(',').map((i) => i.trim());
+    destinationArr.forEach((i) => {
+        myMapDS[i] = extract(i, sourceArr, options);
+    });
 
-	logMap()
-	console.log(tmpMap)
-}
+    logMap();
+    console.log(tmpMap);
+};
 
-hydrateMap()
+hydrateMap();
 
 const renderSelect = (currValue) => {
-	let tmpHtml = Object.hasOwn(tmpMap, currValue) ? `<option disabled> Please Select </option>` : `<option selected disabled> Please Select </option>`
+    let tmpHtml = Object.hasOwn(tmpMap, currValue)
+        ? `<option disabled> Please Select </option>`
+        : `<option selected disabled> Please Select </option>`;
 
-	sourceArr.forEach((i, index) => {
-		tmpHtml += `
+    sourceArr.forEach((i, index) => {
+        tmpHtml += `
 			<option ${i == tmpMap[currValue] ? 'selected' : ''}> ${i} </option>
-		`
-	})
+		`;
+    });
 
-	return tmpHtml
-}
+    return tmpHtml;
+};
 
 const renderTable = () => {
-	let tmpHtml = ''
+    let tmpHtml = '';
 
-	destinationArr.forEach((i) => {
-		tmpHtml += `
+    destinationArr.forEach((i) => {
+        tmpHtml += `
 			<tr>
 				<td> ${i} </td>
 				<td>
@@ -98,14 +101,14 @@ const renderTable = () => {
 					</select>
 				</td>
 			</tr>
-		`
-	})
+		`;
+    });
 
-	return tmpHtml
-}
+    return tmpHtml;
+};
 
 const renderApp = () => {
-	document.querySelector('#app').innerHTML = `
+    document.querySelector('#app').innerHTML = `
 		<h1>Hello!</h1>
 
 		<div>
@@ -135,16 +138,16 @@ const renderApp = () => {
 		<table border="1">
 			${renderTable()}
 		</table>
-	`
-	document.getElementById('save').addEventListener('click', () => {
-		sourceTableColumns = document.getElementById('source').value
-		destinationTableColumns = document.getElementById('destination').value
-		fuzzyConstraint = document.getElementById('myRange').value
-		myMapDS = {}
-		tmpMap = {}
-		hydrateMap()
-		renderApp()
-	})
-}
+	`;
+    document.getElementById('save').addEventListener('click', () => {
+        sourceTableColumns = document.getElementById('source').value;
+        destinationTableColumns = document.getElementById('destination').value;
+        fuzzyConstraint = document.getElementById('myRange').value;
+        myMapDS = {};
+        tmpMap = {};
+        hydrateMap();
+        renderApp();
+    });
+};
 
-renderApp()
+renderApp();
