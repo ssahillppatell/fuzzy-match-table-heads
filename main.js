@@ -6,8 +6,8 @@ let sourceTableColumns =
 let destinationTableColumns =
     'myId, address, myName, Country, Depth, Marks, Percevt, mighty, help, awer, mid, id, jjid';
 
-// let sourceTableColumns = 'iid, cchid, mmid, fff, awo'
-// let destinationTableColumns = 'awer, mid, id, jjid, fgh'
+// let sourceTableColumns = 'id';
+// let destinationTableColumns = 'mid, id';
 
 let sourceArr = [];
 let destinationArr = [];
@@ -34,7 +34,7 @@ const checkVal = (currVal, score) => {
     });
 
     if (!Object.hasOwn(tmpMap, currVal)) {
-        check = true;
+        // check = true;
         Object.entries(tmpMap).forEach(([key, value]) => {
             if (value == currVal) {
                 check = false;
@@ -67,6 +67,7 @@ const hydrateMap = () => {
     destinationArr.forEach((i) => {
         myMapDS[i] = extract(i, sourceArr, options);
     });
+    console.log(myMapDS);
 
     logMap();
     console.log(tmpMap);
